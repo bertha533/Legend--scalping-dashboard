@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legend Scalping Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffcc;
+    }
+    .forex-box {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      text-align: center;
+    }
+    .price {
+      font-size: 2em;
+      margin: 10px 0;
+    }
+    .signal {
+      font-size: 1.5em;
+      margin: 10px 0;
+    }
+    .buy {
+      color: #00ff00;
+    }
+    .sell {
+      color: #ff4444;
+    }
+    .loader {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Legend Scalping Dashboard</h1>
+  <div class="forex-box">
+    <div id="pair">EUR/USD</div>
+    <div id="price" class="price">Loading...</div>
+    <div id="signal" class="signal">Checking signal...</div>
+    <div id="sl-tp"></div>
+    <div class="loader">🔄 Updating every 5s...</div>
+  </div>
+
+  <script>
+    async function getForexData() {
+      try {
+        const res = await fetch('https://api.exchangerate.host/latest?base=EUR&symbols=USD');
+        const data = await res.json();
+        const price = data.rates.USD;
+
+        document.getElementById("price").innerText = price.toFixed(5);
+
+        const randomSignal = Math.random();
+        let signalText = "";
+        let stopLoss, takeProfit;
+
+        if (randomSignal > 0.5) {
+          signalText = "BUY NOW";
+          document.getElementById("signal").className = "signal buy";
+          stopLoss = price - 0.0015;
+          takeProfit = price + 0.003;
+        } else {
+          signalText = "SELL NOW";
+          document.getElementById("signal").className = "signal sell";
+          stopLoss = price + 0.0015;
+          takeProfit = price - 0.003;
+        }
+
+        document.getElementById("signal").innerText = signalText;
+        document.getElementById("sl-tp").innerHTML = `
+          <div>SL: ${stopLoss.toFixed(5)} | TP: ${takeProfit.toFixed(5)}</div>
+        `;
+      } catch (error) {
+        document.getElementById("price").innerText = "Error loading price";
+        document.getElementById("signal").innerText = "No signal";
+        document.getElementById("sl-tp").innerText = "";
+      }
+    }
+
+    getForexData();
+    setInterval(getForexData, 5000);
+  </script>
+</body>
+</html>
