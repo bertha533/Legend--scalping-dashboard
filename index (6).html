@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legend Scalping Dashboard</title>
+  <style>
+    body { background: #111; color: #fff; font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+    h1 { color: #00ffcc; margin-bottom:10px; }
+    .box { background: #1a1a1a; padding:20px; border-radius:10px; max-width:400px; margin:auto; }
+    .price, .signal { font-size:1.5em; margin:10px 0; }
+    .buy { color: #0f0; }
+    .sell { color: #f44; }
+    .status { margin-top:10px; font-size:0.9em; color: #aaa; }
+    button { margin-top:15px; padding:10px 20px; background:#07f; color:#fff; border:none; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <h1>Legend Scalping Dashboard</h1>
+  <div class="box">
+    <div>Pair: EUR/USD</div>
+    <div id="price" class="price">Loading...</div>
+    <div id="signal" class="signal">...</div>
+    <div id="sltp"></div>
+    <div id="status" class="status">⏳ Fetching...</div>
+    <button onclick="update()">🔄 Retry</button>
+  </div>
+
+  <script>
+    async function update() {
+      document.getElementById('status').innerText = '⏳ Fetching...';
+      try {
+        // Use a fallback price in case API fails
+        let price = 1.08450;
+
+        const res = await fetch('https://api.exchangerate.host/convert?from=EUR&to=USD');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.result) price = data.result;
+        }
+
+        document.getElementById('price').innerText = price.toFixed(5);
+
+        const signal = Math.random() > 0.5 ? 'BUY' : 'SELL';
+        document.getElementById('signal').innerText = signal;
+        document.getElementById('signal').className = signal === 'BUY' ? 'signal buy' : 'signal sell';
+
+        const sl = signal === 'BUY' ? price - 0.0015 : price + 0.0015;
+        const tp = signal === 'BUY' ? price + 0.003 : price - 0.003;
+        document.getElementById('sltp').innerText = `SL: ${sl.toFixed(5)} | TP: ${tp.toFixed(5)}`;
+
+        document.getElementById('status').innerText = '✅ Updated';
+      } catch (e) {
+        document.getElementById('price').innerText = '--';
+        document.getElementById('signal').innerText = 'No Signal';
+        document.getElementById('sltp').innerText = '';
+        document.getElementById('status').innerText = '❌ Error, using default';
+      }
+    }
+
+    update();
+    setInterval(update, 10000);
+  </script>
+</body>
+</html>
