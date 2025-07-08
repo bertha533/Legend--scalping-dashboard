@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BerthaFXPro Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📈 BerthaFXPro Live Dashboard</h1>
+    <div>
+      <label>Currency Pair:</label>
+      <select id="pair">
+        <option>EUR/USD</option>
+        <option>GBP/USD</option>
+        <option>USD/ZAR</option>
+      </select>
+
+      <label>Timeframe:</label>
+      <select id="timeframe">
+        <option>1m</option>
+        <option>5m</option>
+        <option>15m</option>
+      </select>
+    </div>
+    <div id="signal-box">
+      <h2>Signal: <span id="signal">Loading...</span></h2>
+      <p>Confidence: <span id="confidence">--%</span></p>
+      <p>SL: <span id="sl">--</span> | TP: <span id="tp">--</span></p>
+    </div>
+    <button onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
